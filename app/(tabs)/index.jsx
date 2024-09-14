@@ -3,9 +3,12 @@ import MapView, { Marker } from "react-native-maps"; // Map component and Marker
 import * as Location from "expo-location"; // Location services from Expo
 import { useEffect, useState } from "react"; // React hooks for managing state and side effects
 import style from "../../styles/home-css"; // Importing custom styles for this screen
+import { db } from "../../config/firebase"; // Importing Firebase database
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 export default function HomeScreen() {
   useEffect(() => {
     getLocationPermision();
+    realtimeData();
   });
   function getLocationPermision() {
     (async () => {
@@ -27,7 +30,16 @@ export default function HomeScreen() {
       });
     })();
   }
-
+  function realtimeData() {
+    const q = query(collection(db, "cities"), where("state", "==", "CA"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const cities = [];
+      querySnapshot.forEach((doc) => {
+        cities.push(doc.data().name);
+      });
+      console.log("Current cities in CA: ", cities.join(", "));
+    });
+  }
   return (
     <>
       <View style={style.container}>
