@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 const style = StyleSheet.create({
   Logo: {
     width: 100,
@@ -16,7 +16,7 @@ const style = StyleSheet.create({
   map: {
     flex: 1,
   },
-  inputContainer: {
+  requestContainer: {
     position: "absolute",
     bottom: 0,
     width: "100%",
@@ -34,96 +34,33 @@ const style = StyleSheet.create({
     marginRight: "auto",
     marginTop: 8,
   },
-  vehicleButtonContainer: {
-    flexDirection: "row",
-    gap: 5,
-    marginLeft: 0,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-  vehicleButton: {
-    width: "25%",
-    height: 80,
-    // borderColor: "black",
-    // borderWidth: 1,
-  },
-  vehicleButtonText: {
-    textAlign: "center",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  input: {
-    height: 40,
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: "white",
-    marginBottom: 10,
+
+  RequestText: {
+   
+    
+    fontSize: 16,
     color: "black",
   },
-  searchResultContainer: {
-    backgroundColor: "white",
-    borderRadius: 10,
-    marginBottom: 10,
+  RequestContainer:{
+    flexDirection: "column",
+    // alignItems: "center",
   },
-  searchResultText: {
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderColor: "black",
-    borderWidth: 1,
-    fontSize: 16,
+  LocationMarkImage: {
+    width: 20,
+    height: 20,
+    // marginLeft: 10,
+    // marginRight: 10,
   },
-  selectedLocationContainer: {
+  pickupContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "white",
-    height: 40,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    marginBottom: 10,
+    
   },
-  selectedLocationText: {
-    fontSize: 16,
-  },
-  removeButton: {
-    marginLeft: 10,
-  },
-  removeButtonText: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  findingRideButton: {
-    marginTop: 10,
-    marginBottom: 10,
-    width: "100%",
-    backgroundColor: "red",
-
-    // borderColor: "black",
-    // borderWidth: 1,
-    borderRadius: 15,
-  },
-  findingRideText: {
-    textAlign: "center",
-    color: "white",
-    fontSize: 28.5,
-    // fontWeight: "bold",
-  },
-  selectedVehicleButton: {
-    backgroundColor: "#726E60",
-    borderRadius: 15,
-  },
-  vehicleButtonTextSelected: {
-    textAlign: "center",
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "white",
-  },
-  fareText: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
+  DropoffContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    color: "blue",
   },
 });
 
-  export default style
+export default style;

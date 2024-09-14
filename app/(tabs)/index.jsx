@@ -6,10 +6,14 @@ import style from "../../styles/home-css"; // Importing custom styles for this s
 import { db } from "../../config/firebase"; // Importing Firebase database
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 export default function HomeScreen() {
+  const [ride, setRide] = useState([]);
+  const [errorMsg, setErrorMsg] = useState(null); // State to store any error message related to location access
+  const [location, setLocation] = useState(null); // State to store the current location
+  const [rideIndex, setRideIndex] = useState(0);
   useEffect(() => {
     getLocationPermision();
     realtimeData();
-  });
+  }, []);
   function getLocationPermision() {
     (async () => {
       // Request permission to access location in the foreground
@@ -31,24 +35,67 @@ export default function HomeScreen() {
     })();
   }
   function realtimeData() {
-    const q = query(collection(db, "cities"), where("state", "==", "CA"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const cities = [];
+    const q = query(
+      collection(db, "RidesInfo"),
+      where("status", "==", "Pending")
+    );
+    onSnapshot(q, (querySnapshot) => {
+      const rides = [];
       querySnapshot.forEach((doc) => {
-        cities.push(doc.data().name);
+        rides.push(doc.data());
       });
-      console.log("Current cities in CA: ", cities.join(", "));
+      setRide([...rides]);
+      console.log("Current rides: ", rides);
+      console.log("saved ride ", ride);
     });
   }
+  // function nextRide(){
+  //   if (rideIndex !== ride.length - 1) {
+  //     setRideIndex(rideIndex + 1);
+  //   }else{
+  //     setRide([])
+  //   }
+  // }
   return (
     <>
       <View style={style.container}>
         <View style={style.map}>
           <MapView style={style.map}></MapView>
         </View>
-        <View style={style.inputContainer}>
+        <View style={style.requestContainer}>
           <Text>Welcome Captain !</Text>
-          <TextInput style={style.input} placeholder="Search" />
+         
+          {ride.map((item) => {
+            // console.log("mapped item", item.dropoffLocationName);
+            return (
+              <View style={style.RequestContainer}>
+                <View style={style.PickupContainer}>
+                  <Image
+                    source={require("../../assets/GoFleet Images/greenLocation.png")}
+                    style={style.LocationMarkImage}
+                  />
+                  <Text style={style.RequestText}>
+                    {item.pickupLocationName}
+                  </Text>
+                </View>
+
+                <View style={style.DropoffContainer}>
+                  <Image
+                    source={require("../../assets/GoFleet Images/redLocation.png")}
+                    style={style.LocationMarkImage}
+                  />
+                  <Text style={style.RequestText}>
+                    {item.dropoffLocationName}
+                  </Text>
+                </View>
+              </View>
+            );
+            // return(
+            //   <View>
+            //     <Text style={style.searchResultText}>{ride.drop}</Text>
+            //   </View>
+            // )
+          })}
         </View>
       </View>
     </>
