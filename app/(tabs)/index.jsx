@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"; // React hooks for managing state a
 import style from "../../styles/home-css"; // Importing custom styles for this screen
 import { db } from "../../config/firebase"; // Importing Firebase database
 import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { ScrollView } from "react-native";
 export default function HomeScreen() {
   const [ride, setRide] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null); // State to store any error message related to location access
@@ -49,6 +50,10 @@ export default function HomeScreen() {
       console.log("saved ride ", ride);
     });
   }
+  async function accept() {
+
+    
+  }
   // function nextRide(){
   //   if (rideIndex !== ride.length - 1) {
   //     setRideIndex(rideIndex + 1);
@@ -60,41 +65,91 @@ export default function HomeScreen() {
     <>
       <View style={style.container}>
         <View style={style.map}>
-          <MapView style={style.map}></MapView>
+          {location && (
+            <MapView
+              style={style.map}
+              region={{
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.2,
+                longitudeDelta: 0.1,
+              }}
+            >
+              {ride.map((item) => {
+                console.log("mapped longitude item", item.Pickuplongitude);
+                return (
+                  <>
+                    <Marker
+                      coordinate={{
+                        latitude: item.Pickuplatitude,
+                        longitude: item.Pickuplongitude,
+                      }}
+                      pinColor="green"
+                      title="Pickup Location"
+                    />
+                    <Marker
+                      coordinate={{
+                        latitude: item.Dropofflatitude,
+                        longitude: item.dropofflongitude,
+                      }}
+                      title="Dropoff Location"
+                    />
+                  </>
+                );
+              })}
+            </MapView>
+          )}
         </View>
         <View style={style.requestContainer}>
-          <Text>Welcome Captain !</Text>
-         
+          <Text style={style.WelcomeText}>Welcome Captain !</Text>
+
           {ride.map((item) => {
             // console.log("mapped item", item.dropoffLocationName);
             return (
-              <View style={style.RequestContainer}>
-                <View style={style.PickupContainer}>
-                  <Image
-                    source={require("../../assets/GoFleet Images/greenLocation.png")}
-                    style={style.LocationMarkImage}
-                  />
-                  <Text style={style.RequestText}>
-                    {item.pickupLocationName}
-                  </Text>
-                </View>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <View style={style.RequestContainerOg}>
+                  <View style={style.vehicleContainer}>
+                    <Text style={style.vehicle}>
+                      Vehicle Requested : {item.vehicle}
+                    </Text>
+                  </View>
+                  <View style={style.PickupContainer}>
+                    <Image
+                      source={require("../../assets/GoFleet Images/greenLocation.png")}
+                      style={style.LocationMarkImage}
+                    />
+                    <Text style={style.RequestText}>
+                      {item.pickupLocationName}
+                    </Text>
+                  </View>
 
-                <View style={style.DropoffContainer}>
-                  <Image
-                    source={require("../../assets/GoFleet Images/redLocation.png")}
-                    style={style.LocationMarkImage}
-                  />
-                  <Text style={style.RequestText}>
-                    {item.dropoffLocationName}
-                  </Text>
+                  <View style={style.DropoffContainer}>
+                    <Image
+                      source={require("../../assets/GoFleet Images/redLocation.png")}
+                      style={style.LocationMarkImage}
+                    />
+                    <Text style={style.RequestText}>
+                      {item.dropoffLocationName}
+                    </Text>
+                  </View>
+                  <View style={style.InfoContainer}>
+                    <Text style={style.fare}>Fare : {item.fare}</Text>
+                    <Text style={style.status}>Status : {item.status}</Text>
+                    <Text style={style.distance}>
+                      Distance : {Math.round(item.distance)} KM
+                    </Text>
+                  </View>
+                  <View style={style.ButtonConatiner}>
+                    <TouchableOpacity style={style.Accept}>
+                      <Text style={style.AcceptText}>Accept</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={style.Reject}>
+                      <Text style={style.RejectText}>Reject</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
+              </ScrollView>
             );
-            // return(
-            //   <View>
-            //     <Text style={style.searchResultText}>{ride.drop}</Text>
-            //   </View>
-            // )
           })}
         </View>
       </View>
