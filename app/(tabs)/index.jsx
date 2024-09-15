@@ -4,7 +4,7 @@ import * as Location from "expo-location"; // Location services from Expo
 import { useEffect, useState } from "react"; // React hooks for managing state and side effects
 import style from "../../styles/home-css"; // Importing custom styles for this screen
 import { db } from "../../config/firebase"; // Importing Firebase database
-import { collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from "firebase/firestore"; // Firebase Firestore imports
+import { collection, onSnapshot, query,  where } from "firebase/firestore"; // Firebase Firestore imports
 
 export default function HomeScreen() {
   const [ride, setRide] = useState([]); // State to hold ride information
