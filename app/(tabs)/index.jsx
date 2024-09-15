@@ -1,10 +1,17 @@
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native"; // Core components for UI
-import MapView, { Marker } from "react-native-maps"; // Map component and Marker for pinning locations
+import MapView, { Marker, Polyline } from "react-native-maps"; // Map component and Marker for pinning locations
 import * as Location from "expo-location"; // Location services from Expo
 import { useEffect, useState } from "react"; // React hooks for managing state and side effects
 import style from "../../styles/home-css"; // Importing custom styles for this screen
 import { db } from "../../config/firebase"; // Importing Firebase database
-import { collection, onSnapshot, query,  where } from "firebase/firestore"; // Firebase Firestore imports
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+  updateDoc,
+  doc,
+} from "firebase/firestore"; // Firebase Firestore imports
 
 export default function HomeScreen() {
   const [ride, setRide] = useState([]); // State to hold ride information
@@ -35,10 +42,7 @@ export default function HomeScreen() {
   }
 
   function realtimeData() {
-    const q = query(
-      collection(db, "RidesInfo"),
-      where("status", "==", "Accepted") // Fetch only accepted rides
-    );
+    const q = query(collection(db, "RidesInfo"));
 
     onSnapshot(q, (querySnapshot) => {
       const rides = [];
@@ -52,6 +56,22 @@ export default function HomeScreen() {
     });
   }
 
+  // Function to accept a ride and update the status
+  const acceptRide = async (rideId) => {
+    // Update the specific ride's status to 'accepted'
+    const rideDoc = doc(db, "RidesInfo", rideId);
+    await updateDoc(rideDoc, { status: "accepted" });
+
+    // Remove all other pending rides from the list after accepting one
+    setRide((prevRides) => prevRides.filter((ride) => ride.id === rideId));
+  };
+
+  // Function to reject a ride and update the status
+  const rejectRide = async (rideId) => {
+    const rideDoc = doc(db, "RidesInfo", rideId);
+    await updateDoc(rideDoc, { status: "rejected" });
+  };
+
   return (
     <View style={style.container}>
       <View style={style.map}>
@@ -61,12 +81,15 @@ export default function HomeScreen() {
             region={{
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
-              latitudeDelta: 0.2,
-              longitudeDelta: 0.1,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.03,
             }}
           >
             {ride.map((item) => (
-              <>
+              <View key={item.id}>
+                
+                {/* Add a unique key for each ride */}
+                {/* Pickup Marker */}
                 <Marker
                   coordinate={{
                     latitude: item.Pickuplatitude,
@@ -75,6 +98,7 @@ export default function HomeScreen() {
                   pinColor="green"
                   title="Pickup Location"
                 />
+                {/* Dropoff Marker */}
                 <Marker
                   coordinate={{
                     latitude: item.Dropofflatitude,
@@ -82,12 +106,31 @@ export default function HomeScreen() {
                   }}
                   title="Dropoff Location"
                 />
-              </>
+                {/* Polyline to connect Pickup and Dropoff */}
+                <Polyline
+                  coordinates={[
+                    {
+                      latitude: item.Pickuplatitude,
+                      longitude: item.Pickuplongitude,
+                    },
+                    {
+                      latitude: item.Dropofflatitude,
+                      longitude: item.dropofflongitude,
+                    },
+                  ]}
+                  strokeColor="#23B5D3" // Line color (black in this case)
+                  strokeWidth={3} // Line thickness
+                />
+              </View>
             ))}
           </MapView>
         )}
       </View>
       <View style={style.requestContainer}>
+        <Image
+          source={require("../../assets/GoFleet Images/logo.png")}
+          style={style.Logo}
+        />
         <Text style={style.WelcomeText}>Welcome Captain!</Text>
         {ride.length > 0 ? (
           ride.map((item) => (
@@ -123,11 +166,29 @@ export default function HomeScreen() {
                     Distance : {Math.round(item.distance)} KM
                   </Text>
                 </View>
+
+                {/* Show Accept/Reject buttons only if the ride is still pending */}
+                {item.status == "Pending" && (
+                  <View style={style.ButtonConatiner}>
+                    <TouchableOpacity
+                      style={style.Accept}
+                      onPress={() => acceptRide(item.id)}
+                    >
+                      <Text style={style.buttonText}>Accept</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={style.Reject}
+                      onPress={() => rejectRide(item.id)}
+                    >
+                      <Text style={style.buttonText}>Reject</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             </ScrollView>
           ))
         ) : (
-          <Text style={style.noRideText}>No accepted rides at the moment</Text>
+          <Text style={style.noRideText}>No rides at the moment !</Text>
         )}
       </View>
     </View>

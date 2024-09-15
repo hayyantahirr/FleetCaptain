@@ -17,8 +17,8 @@ const style = StyleSheet.create({
   },
   Logo: {
     width: 100,
-    height: 100,
-    opacity: 0.5,
+    height: 40,
+    opacity: 0.85,
     marginLeft: "auto",
     marginRight: "auto",
   },
@@ -129,6 +129,14 @@ const style = StyleSheet.create({
 
     marginLeft: "auto",
     marginRight: "auto",
+  },
+  noRideText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "black",
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 
