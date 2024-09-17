@@ -41,7 +41,6 @@ const style = StyleSheet.create({
     borderTopEndRadius: 20,
     borderTopStartRadius: 20,
     color: "black",
-    
   },
   RequestContainerOg: {
     borderColor: "#62929E",

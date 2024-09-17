@@ -60,7 +60,7 @@ export default function HomeScreen() {
   const acceptRide = async (rideId) => {
     // Update the specific ride's status to 'accepted'
     const rideDoc = doc(db, "RidesInfo", rideId);
-    await updateDoc(rideDoc, { status: "accepted" });
+    await updateDoc(rideDoc, { status: "Accepted" });
 
     // Remove all other pending rides from the list after accepting one
     setRide((prevRides) => prevRides.filter((ride) => ride.id === rideId));
@@ -69,7 +69,7 @@ export default function HomeScreen() {
   // Function to reject a ride and update the status
   const rejectRide = async (rideId) => {
     const rideDoc = doc(db, "RidesInfo", rideId);
-    await updateDoc(rideDoc, { status: "rejected" });
+    await updateDoc(rideDoc, { status: "Rejected" });
   };
 
   return (
@@ -87,7 +87,6 @@ export default function HomeScreen() {
           >
             {ride.map((item) => (
               <View key={item.id}>
-                
                 {/* Add a unique key for each ride */}
                 {/* Pickup Marker */}
                 <Marker
